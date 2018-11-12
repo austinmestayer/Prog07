@@ -10,32 +10,21 @@ public class Prog07_AnalyzeGrades {
 	
 	public static void main (String[] args) throws FileNotFoundException {
 		Scanner userIn = new Scanner(System.in);
-		String sort = null;
-		boolean exit = false;
-		
+
 		Scanner fileScanner = fileInput();
 		int Grades[] = arrayAssigner(fileScanner);
 		
 		System.out.println("Enter a sorting value (asc. or desc.):");
-		
-		while(exit == false) {
-		sort = userIn.next();
-		}
-		if (sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("asc.")) {
-			sort = "asc";
-			exit = true;
-		}
-		else if (sort.equalsIgnoreCase("desc") || sort.equalsIgnoreCase("desc.")) {
-			sort = "desc";
-			exit = true;
-		}
-		else {
-			System.out.println("Please enter a valid sorting value (asc. or desc.):");
-		}
-		
+		String sort = dirVerifier();
+			
 		int GradesSorted[] = bubbleSort(Grades,	z, sort);
-
-};
+		
+		System.out.println(GradesSorted[0]);
+		System.out.println(GradesSorted[1]);
+		System.out.println(GradesSorted[2]);
+		System.out.println(GradesSorted[3]);
+		System.out.println(GradesSorted[4]);
+	}
 	
 public static Scanner fileInput() throws FileNotFoundException {
 		try {
@@ -98,9 +87,7 @@ public static int[] bubbleSort(int Grades[], int z, String sort) {
 			
 			for (int x = 0; x < z-1; x++) {
 				if (Grades[x] < Grades[x+1]) {
-					temp = Grades[x];
-					Grades[x] = Grades[x+1];
-					Grades[x+1] = temp;
+				
 				}
 			}
 		}
@@ -109,8 +96,36 @@ public static int[] bubbleSort(int Grades[], int z, String sort) {
 	return Grades;
 }
 
-public static String dirVerifier(String sort) {
+public static int[] swapMethod(int Grades[], int x) {
+	int temp;
+	
+	temp = Grades[x];
+	Grades[x] = Grades[x+1];
+	Grades[x+1] = temp;
+	
+	return Grades;
+}
+
+public static String dirVerifier() {
+	boolean exit = false;
+	String sort = null;
+	Scanner userIn = new Scanner(System.in);
+	while(exit == false) {
+		sort = userIn.next();
+		if (sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("asc.")) {
+			sort = "asc";
+			exit = true;
+		}
+		else if (sort.equalsIgnoreCase("desc") || sort.equalsIgnoreCase("desc.")) {
+			sort = "desc";
+			exit = true;
+		}
+		else {
+			System.out.println("Please enter a valid sorting value (asc. or desc.):");
+		}
+		}
 	return sort;
 }
+
 
 }
