@@ -14,12 +14,10 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Prog07_AnalyzeGrades {
 
-static int z;
+static int z; //shortener for array.length
 static String order;
 
 //Main Method__________________________________________________________________________________________________________________	
@@ -31,16 +29,13 @@ public static void main (String[] args) throws FileNotFoundException {
 		String sort = dirVerifier();
 			
 		int GradesSorted[] = bubbleSort(Grades,	z, sort);
-		fileOutput(GradesSorted);
+		float[] gradeAnalysis = fileAnalysis(GradesSorted);
+		fileOutput(GradesSorted, gradeAnalysis);
 	}
 //File input method____________________________________________________________________________________________________________	
 public static Scanner fileInput() throws FileNotFoundException {
 		JFileChooser file = new JFileChooser();
-		
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		        "txt", "txt");
-		file.setFileFilter(filter);
-		
+
 		boolean exit = false;
 
 		do {
@@ -72,11 +67,11 @@ public static Scanner fileInput() throws FileNotFoundException {
 		return new Scanner (file.getSelectedFile());
 		}
 //File Analysis method_________________________________________________________________________________________________________	
-public static double[] fileAnalysis(int[] GradesSorted) {
-	int min;
-	int max;
-	double average;
-	double median;
+public static float[] fileAnalysis(int[] GradesSorted) {
+	int min = 0;
+	int max = 0;
+	float mean = 0;
+	float median = 0;
 	
 	if (order.equals("asc")) {min = GradesSorted[0];} 	if (order.equals("desc")) {min = GradesSorted[z-1];}
 	if (order.equals("asc")) {max = GradesSorted[z-1];} if (order.equals("desc")) {max = GradesSorted[0];}
@@ -85,13 +80,45 @@ public static double[] fileAnalysis(int[] GradesSorted) {
 	for (int k = 0; k < z; k++) {
 		arrTotal = GradesSorted[k] + arrTotal;
 	}
-	average = arrTotal/z;
+	mean = (float)arrTotal/z;
 	
-	return null;
+	if (z % 2 != 0) {
+		median = GradesSorted[z/2];
+	}
+	if (z % 2 == 0) {
+		median = ((float)GradesSorted[z/2] + (float)GradesSorted[z/2-1])/2;
+	}
+	
+	int A = 0;
+	int B = 0;
+	int C = 0;
+	int D = 0;
+	int F = 0;
+	
+	for (int k = 0; k < z; k++) {
+	if (GradesSorted[k] < 60) { F++; }
+	if (GradesSorted[k] > 60 && GradesSorted[k] < 70) { D++; }
+	if (GradesSorted[k] > 70 && GradesSorted[k] < 80) { C++; }
+	if (GradesSorted[k] > 80 && GradesSorted[k] < 90) { B++; }
+	if (GradesSorted[k] > 90) { A++; }
+	}
+
+	float[] analysis = new float [9];
+	analysis[0] = min;
+	analysis[1] = max;
+	analysis[2] = mean;
+	analysis[3] = median;
+	analysis[4] = A;
+	analysis[5] = B;
+	analysis[6] = C;
+	analysis[7] = D;
+	analysis[8] = F;
+	
+	return analysis;
 	
 }
 //File output method___________________________________________________________________________________________________________
-public static void fileOutput(int[] GradesSorted) throws FileNotFoundException{
+public static void fileOutput(int[] GradesSorted, float[] gradeAnalysis) throws FileNotFoundException{
 	JFileChooser chooser = new JFileChooser();
 	File selectedFile = null;
 	
@@ -99,14 +126,45 @@ public static void fileOutput(int[] GradesSorted) throws FileNotFoundException{
 	selectedFile = chooser.getSelectedFile();
 	selectedFile.getPath();
 	}
-	
+//Printing output______________________________________________________________________________________________________________	
 	try {
 	PrintWriter write = new PrintWriter(selectedFile);
 	
-	for (int x = 0; x < GradesSorted.length; x++) {
+	for (int x = 0; x < z; x++) {
 		write.println(GradesSorted[x]);
 	}
-	write.println(order);
+	write.println();
+	write.println();
+	
+	write.print("Mean: ");
+	write.printf("%3.3f%n", gradeAnalysis[2]);
+	
+	write.print("Median: ");
+	write.printf("%3.3f%n", gradeAnalysis[3]);
+	
+	write.print("Minimum: ");
+	write.printf("%3.0f%n", gradeAnalysis[0]);
+	
+	write.print("Maximum: ");
+	write.printf("%3.0f%n", gradeAnalysis[1]);
+	
+	write.print("Number of A's: ");
+	write.printf("%3.0f%n", gradeAnalysis[4]);
+	
+	write.print("Number of B's: ");
+	write.printf("%3.0f%n", gradeAnalysis[5]);
+	
+	write.print("Number of C's: ");
+	write.printf("%3.0f%n", gradeAnalysis[6]);
+	
+	write.print("Number of D's: ");
+	write.printf("%3.0f%n", gradeAnalysis[7]);
+	
+	write.print("Number of F's: ");
+	write.printf("%3.0f%n", gradeAnalysis[8]);
+	
+	write.println("Total Number of Grades: " + z);
+	
 	write.close();
 	
 	}
@@ -115,6 +173,7 @@ public static void fileOutput(int[] GradesSorted) throws FileNotFoundException{
 	    e.printStackTrace();
 	    System.out.println("No such file exists.");
 	}
+//Printing output end__________________________________________________________________________________________________________	
 }
 //File to array assignment_____________________________________________________________________________________________________	
 public static int[] arrayAssigner(Scanner fileScanner) {
@@ -190,6 +249,4 @@ public static String dirVerifier() {
 	userIn.close();
 	return sort;
 }
-
-
 }
