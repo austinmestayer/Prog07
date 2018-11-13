@@ -1,0 +1,195 @@
+/**
+* Part 1 of 2, Prog7
+*
+* CSC 1350 Programming project No 6
+* Section 7
+*
+* @author amesta2
+* @since 11/7/2018
+*
+*/
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+public class Prog07_AnalyzeGrades {
+
+static int z;
+static String order;
+
+//Main Method__________________________________________________________________________________________________________________	
+public static void main (String[] args) throws FileNotFoundException {
+		Scanner fileScanner = fileInput();
+		int Grades[] = arrayAssigner(fileScanner);
+		
+		System.out.println("Enter a sorting value (asc. or desc.):");
+		String sort = dirVerifier();
+			
+		int GradesSorted[] = bubbleSort(Grades,	z, sort);
+		fileOutput(GradesSorted);
+	}
+//File input method____________________________________________________________________________________________________________	
+public static Scanner fileInput() throws FileNotFoundException {
+		JFileChooser file = new JFileChooser();
+		
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		        "txt", "txt");
+		file.setFileFilter(filter);
+		
+		boolean exit = false;
+
+		do {
+			
+		 if(file.showOpenDialog(file) == JFileChooser.APPROVE_OPTION) {
+		       System.out.println("Opening " +
+		            file.getSelectedFile().getName() + "...");
+		 		}
+		boolean insideexit = false;
+		Scanner check = new Scanner (file.getSelectedFile());
+		do {
+		if (check.hasNextInt() != true) {
+			System.out.println("Please select a valid file:");
+		}
+		if (check.nextInt() < 0) {
+			System.out.println("Please select a file that declares >= 0 grade inputs:");
+			file.showOpenDialog(file);
+		}	
+		if (check.hasNextInt() != false) {
+			insideexit = true;
+			exit = true;
+			check.close();
+		}
+		}
+		while(insideexit == false);
+		}
+		while (exit == false);
+		
+		return new Scanner (file.getSelectedFile());
+		}
+//File Analysis method_________________________________________________________________________________________________________	
+public static double[] fileAnalysis(int[] GradesSorted) {
+	int min;
+	int max;
+	double average;
+	double median;
+	
+	if (order.equals("asc")) {min = GradesSorted[0];} 	if (order.equals("desc")) {min = GradesSorted[z-1];}
+	if (order.equals("asc")) {max = GradesSorted[z-1];} if (order.equals("desc")) {max = GradesSorted[0];}
+	
+	int arrTotal = 0;
+	for (int k = 0; k < z; k++) {
+		arrTotal = GradesSorted[k] + arrTotal;
+	}
+	average = arrTotal/z;
+	
+	return null;
+	
+}
+//File output method___________________________________________________________________________________________________________
+public static void fileOutput(int[] GradesSorted) throws FileNotFoundException{
+	JFileChooser chooser = new JFileChooser();
+	File selectedFile = null;
+	
+	if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+	selectedFile = chooser.getSelectedFile();
+	selectedFile.getPath();
+	}
+	
+	try {
+	PrintWriter write = new PrintWriter(selectedFile);
+	
+	for (int x = 0; x < GradesSorted.length; x++) {
+		write.println(GradesSorted[x]);
+	}
+	write.println(order);
+	write.close();
+	
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
+	    System.out.println("No such file exists.");
+	}
+}
+//File to array assignment_____________________________________________________________________________________________________	
+public static int[] arrayAssigner(Scanner fileScanner) {
+		int x = fileScanner.nextInt();
+		z = x;
+		int[] Grades = new int [x];
+		
+		for (int y = 0; y < x; y++) {
+			if (fileScanner.hasNextInt()) {
+			Grades[y] = fileScanner.nextInt();
+			}
+		}
+		return Grades;	
+	}
+//bubble sorting method________________________________________________________________________________________________________
+public static int[] bubbleSort(int Grades[], int z, String sort) {
+
+	if (sort.equalsIgnoreCase("asc")) {
+		for (int y = 0; y < z; y++) {
+			
+			for (int x = 0; x < z-1; x++) {
+				if (Grades[x] > Grades[x+1]) {
+					swap(Grades, x);
+				}
+			}
+		}
+	}
+	
+	if (sort.equalsIgnoreCase("desc")) {
+		for (int y = 0; y < z; y++) {
+			
+			for (int x = 0; x < z-1; x++) {
+				if (Grades[x] < Grades[x+1]) {
+					swap(Grades, x);
+				}
+			}
+		}
+	}
+	
+	return Grades;
+}
+//Swap method__________________________________________________________________________________________________________________	
+public static int[] swap(int Grades[], int x) {
+	int temp;
+	
+	temp = Grades[x];
+	Grades[x] = Grades[x+1];
+	Grades[x+1] = temp;
+	
+	return Grades;
+}
+//Number sorting input verifier method_________________________________________________________________________________________		
+public static String dirVerifier() {
+	boolean exit = false;
+	String sort = null;
+	Scanner userIn = new Scanner(System.in);
+	while(exit == false) {
+		sort = userIn.next();
+		if (sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("asc.")) {
+			sort = "asc";
+			order = "asc";
+			exit = true;
+		}
+		else if (sort.equalsIgnoreCase("desc") || sort.equalsIgnoreCase("desc.")) {
+			sort = "desc";
+			order = "desc";
+			exit = true;
+		}
+		else {
+			System.out.println("Please enter a valid sorting value (asc. or desc.):");
+		}
+		}
+	userIn.close();
+	return sort;
+}
+
+
+}
