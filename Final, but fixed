@@ -1,0 +1,312 @@
+/**
+* Part 2 of 2, Prog7
+*
+* CSC 1350 Programming project No 6
+* Section 7
+*
+* @author amesta2
+* @since 11/7/2018
+*
+*/
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import javax.swing.JFileChooser;
+
+public class Prog07_AnalyzeGrades {
+
+static int z; //shortener for array.length
+static String order;
+static int middle;
+
+//Main Method__________________________________________________________________________________________________________________	
+public static void main (String[] args) throws FileNotFoundException {
+
+		Scanner fileScanner = fileInput();
+		int Grades[] = arrayAssigner(fileScanner);
+		
+		System.out.println("Enter a sorting value (asc. or desc.):");
+		String sort = dirVerifier();
+			
+		int GradesSorted[] = bubbleSort(Grades,	z, sort);
+		float[] gradeAnalysis = fileAnalysis(GradesSorted);
+		fileOutput(GradesSorted, gradeAnalysis);
+		
+		Scanner sc = new Scanner (System.in);
+		boolean finished = false;
+		do {
+			System.out.println("Search for a grade value:");	
+				int grade = sc.nextInt();
+				binary(GradesSorted, grade);
+				int result = binary(GradesSorted, grade);
+				
+				if (result == -1) {
+					System.out.println("The value you entered is not on the list.");
+				}
+				else if (result == -2) {
+					System.out.println("The value you are searching for can be found at positions " + middle + " and " + (middle + 1) + "."); 
+					}
+				else if (result == -3) {
+						System.out.println("The value you are searching for can be found at positions " + (middle - 1)+ " and " + (middle) + ".");
+				}
+				else {
+					System.out.println("The grade you are searching for is at position " + result + " on the list.");
+				}
+				
+				
+		}
+		while (finished == false);
+		System.exit(0);
+	}
+//File input method____________________________________________________________________________________________________________	
+public static Scanner fileInput() throws FileNotFoundException {
+		JFileChooser file = new JFileChooser();
+
+		boolean exit = false;
+
+		do {
+			
+		 if(file.showOpenDialog(file) == JFileChooser.APPROVE_OPTION) {
+		       System.out.println("Opening " +
+		            file.getSelectedFile().getName() + "...");
+		 		}
+		boolean insideexit = false;
+		Scanner check = new Scanner (file.getSelectedFile());
+		do {
+		if (check.hasNextInt() != true) {
+			System.out.println("Please select a valid file:");
+		}
+		if (check.nextInt() < 0) {
+			System.out.println("Please select a file that declares >= 0 grade inputs:");
+			file.showOpenDialog(file);
+		}	
+		if (check.hasNextInt() != false) {
+			insideexit = true;
+			exit = true;
+		}
+		}
+		while(insideexit == false);
+		}
+		while (exit == false);
+		
+		return new Scanner (file.getSelectedFile());
+		}
+//File Analysis method_________________________________________________________________________________________________________	
+public static float[] fileAnalysis(int[] GradesSorted) {
+	int min = 0;
+	int max = 0;
+	float mean = 0;
+	float median = 0;
+	
+	if (order.equals("asc")) {min = GradesSorted[0];} 	if (order.equals("desc")) {min = GradesSorted[z-1];}
+	if (order.equals("asc")) {max = GradesSorted[z-1];} if (order.equals("desc")) {max = GradesSorted[0];}
+	
+	int arrTotal = 0;
+	for (int k = 0; k < z; k++) {
+		arrTotal = GradesSorted[k] + arrTotal;
+	}
+	mean = (float)arrTotal/z;
+	
+	if (z % 2 != 0) {
+		median = GradesSorted[z/2];
+	}
+	if (z % 2 == 0) {
+		median = ((float)GradesSorted[z/2] + (float)GradesSorted[z/2-1])/2;
+	}
+	
+	int A = 0;
+	int B = 0;
+	int C = 0;
+	int D = 0;
+	int F = 0;
+	
+	for (int k = 0; k < z; k++) {
+	if (GradesSorted[k] < 60) { F++; }
+	if (GradesSorted[k] > 60 && GradesSorted[k] < 70) { D++; }
+	if (GradesSorted[k] > 70 && GradesSorted[k] < 80) { C++; }
+	if (GradesSorted[k] > 80 && GradesSorted[k] < 90) { B++; }
+	if (GradesSorted[k] > 90) { A++; }
+	}
+
+	float[] analysis = new float [9];
+	analysis[0] = min;
+	analysis[1] = max;
+	analysis[2] = mean;
+	analysis[3] = median;
+	analysis[4] = A;
+	analysis[5] = B;
+	analysis[6] = C;
+	analysis[7] = D;
+	analysis[8] = F;
+	
+	return analysis;
+	
+}
+//File output method___________________________________________________________________________________________________________
+public static void fileOutput(int[] GradesSorted, float[] gradeAnalysis) throws FileNotFoundException{
+	JFileChooser chooser = new JFileChooser();
+	File selectedFile = null;
+	
+	if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+	selectedFile = chooser.getSelectedFile();
+	selectedFile.getPath();
+	}
+//Printing output______________________________________________________________________________________________________________	
+	try {
+	PrintWriter write = new PrintWriter(selectedFile);
+	
+	for (int x = 0; x < z; x++) {
+		write.println(GradesSorted[x]);
+	}
+	write.println();
+	write.println();
+	
+	write.print("Mean: ");
+	write.printf("%3.3f%n", gradeAnalysis[2]);
+	
+	write.print("Median: ");
+	write.printf("%3.3f%n", gradeAnalysis[3]);
+	
+	write.print("Minimum: ");
+	write.printf("%3.0f%n", gradeAnalysis[0]);
+	
+	write.print("Maximum: ");
+	write.printf("%3.0f%n", gradeAnalysis[1]);
+	
+	write.print("Number of A's: ");
+	write.printf("%3.0f%n", gradeAnalysis[4]);
+	
+	write.print("Number of B's: ");
+	write.printf("%3.0f%n", gradeAnalysis[5]);
+	
+	write.print("Number of C's: ");
+	write.printf("%3.0f%n", gradeAnalysis[6]);
+	
+	write.print("Number of D's: ");
+	write.printf("%3.0f%n", gradeAnalysis[7]);
+	
+	write.print("Number of F's: ");
+	write.printf("%3.0f%n", gradeAnalysis[8]);
+	
+	write.println("Total Number of Grades: " + z);
+	
+	write.close();
+	
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
+	    System.out.println("No such file exists.");
+	}
+//Printing output end__________________________________________________________________________________________________________	
+}
+//File to array assignment_____________________________________________________________________________________________________	
+public static int[] arrayAssigner(Scanner fileScanner) {
+		int x = fileScanner.nextInt();
+		z = x;
+		int[] Grades = new int [x];
+		
+		for (int y = 0; y < x; y++) {
+			if (fileScanner.hasNextInt()) {
+			Grades[y] = fileScanner.nextInt();
+			}
+		}
+		return Grades;	
+	}
+//bubble sorting method________________________________________________________________________________________________________
+public static int[] bubbleSort(int Grades[], int z, String sort) {
+
+	if (sort.equalsIgnoreCase("asc")) {
+		for (int y = 0; y < z; y++) {
+			
+			for (int x = 0; x < z-1; x++) {
+				if (Grades[x] > Grades[x+1]) {
+					swap(Grades, x);
+				}
+			}
+		}
+	}
+	
+	if (sort.equalsIgnoreCase("desc")) {
+		for (int y = 0; y < z; y++) {
+			
+			for (int x = 0; x < z-1; x++) {
+				if (Grades[x] < Grades[x+1]) {
+					swap(Grades, x);
+				}
+			}
+		}
+	}
+	
+	return Grades;
+}
+//Swap method__________________________________________________________________________________________________________________	
+public static int[] swap(int Grades[], int x) {
+	int temp;
+	
+	temp = Grades[x];
+	Grades[x] = Grades[x+1];
+	Grades[x+1] = temp;
+	
+	return Grades;
+}
+//Number sorting input verifier method_________________________________________________________________________________________		
+public static String dirVerifier() {
+	boolean exit = false;
+	String sort = null;
+	Scanner userIn = new Scanner(System.in);
+	while(exit == false) {
+		sort = userIn.next();
+		if (sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("asc.")) {
+			sort = "asc";
+			order = "asc";
+			exit = true;
+		}
+		else if (sort.equalsIgnoreCase("desc") || sort.equalsIgnoreCase("desc.")) {
+			sort = "desc";
+			order = "desc";
+			exit = true;
+		}
+		else {
+			System.out.println("Please enter a valid sorting value (asc. or desc.):");
+		}
+		}
+	return sort;
+}
+//Binary search method_________________________________________________________________________________________________________	
+public static int binary(int[] GradesSorted, int grade) {
+
+	{	
+if(order.equals("asc")) {
+	  int start = 0;
+      int end = z - 1;
+      while (start <= end) {
+          int mid = (start + end) / 2;
+          if (grade == GradesSorted[mid] && grade == GradesSorted[mid + 1]) { middle = mid; return -2; }
+          if (grade == GradesSorted[mid] && grade == GradesSorted[mid - 1]) { middle = mid; return -3; }
+          if (grade == GradesSorted[mid]) { return mid;  }
+          if (grade < GradesSorted[mid]) { end = mid - 1; } 
+          else { start = mid + 1; }
+      }
+      return -1;
+}
+	{
+	      if(order.equals("desc")) {
+	    		int descStart = 0;
+	    	      int descEnd = z - 1;
+	    	      while (descStart <= descEnd) {
+	    	          int mid = (descStart + descEnd) / 2;
+	    	          if (grade == GradesSorted[mid] && grade == GradesSorted[mid + 1]) { middle = mid; return -2; }
+	    	          if (grade == GradesSorted[mid] && grade == GradesSorted[mid - 1]) { middle = mid; return -3; }
+	    	          if (grade == GradesSorted[mid]) { return mid; }
+	    	          if (grade > GradesSorted[mid]) { descEnd = mid - 1;} 
+	    	          else { descStart = mid + 1;}
+	    	      	}
+	      		}
+			}
+		}
+	return -1;
+	}
+}
