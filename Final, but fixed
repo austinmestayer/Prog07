@@ -22,7 +22,7 @@ static String order;
 static int middle;
 
 //Main Method__________________________________________________________________________________________________________________	
-public static void main (String[] args) throws FileNotFoundException {
+public static void main (String[] args) throws FileNotFoundException, InterruptedException {
 
 		Scanner fileScanner = fileInput();
 		int Grades[] = arrayAssigner(fileScanner);
@@ -36,6 +36,34 @@ public static void main (String[] args) throws FileNotFoundException {
 		
 		Scanner sc = new Scanner (System.in);
 		boolean finished = false;
+		String gradesearch = null;
+		
+		System.out.println("Would you like to search for a grade value? [Y/N]");
+		
+		do {
+			if (sc.hasNextLine()) {
+				gradesearch = sc.nextLine();
+			}
+			else {
+				System.out.println("Please enter a selection from the provided options [Y/N}");
+			}
+			if (gradesearch.equalsIgnoreCase("y")) {
+				gradesearch = "y";
+				finished = true;
+			}
+			else if (gradesearch.equalsIgnoreCase("n")) {
+				System.out.println("terminating...");
+				Thread.sleep(3000);
+				System.exit(0);
+			}
+			else {
+				System.out.println("Please enter a selection from the provided options [Y/N}");
+			}
+		}
+		while (finished == false);
+		
+		finished = false;
+		
 		do {
 			System.out.println("Search for a grade value:");	
 				int grade = sc.nextInt();
@@ -55,9 +83,35 @@ public static void main (String[] args) throws FileNotFoundException {
 					System.out.println("The grade you are searching for is at position " + result + " on the list.");
 				}
 				
+				System.out.println("Would you like to search for another grade value? [Y/N]");
+				
+				do {
+					gradesearch = sc.nextLine();
+					if (sc.hasNextLine()) {
+						gradesearch = sc.nextLine();
+					}
+					else {
+						System.out.println("Please enter a selection from the provided options [Y/N}");
+					}
+					if (gradesearch.equalsIgnoreCase("y")) {
+						gradesearch = "y";
+						finished = true;
+					}
+					else if (gradesearch.equalsIgnoreCase("n")) {
+						System.out.println("terminating...");
+						Thread.sleep(3000);
+						System.exit(0);
+					}
+					else {
+						System.out.println("Please enter a selection from the provided options [Y/N}");
+					}
+				}
+				while (finished == false);
+				
+				finished = false;
 				
 		}
-		while (finished == false);
+		while (finished == false && gradesearch.equals("y"));
 		System.exit(0);
 	}
 //File input method____________________________________________________________________________________________________________	
